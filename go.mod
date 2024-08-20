@@ -1,8 +1,6 @@
 module github.com/secw01f/tsutil
 
-go 1.22
-
-toolchain go1.22.6
+go 1.23
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
