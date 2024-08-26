@@ -134,6 +134,20 @@ func TsDevice(authkey string, deviceid string) *tailscale.Device {
 	return details
 }
 
+func TsDevices(authkey string) []*tailscale.Device {
+	tailscale.I_Acknowledge_This_API_Is_Unstable = true
+
+	client := tailscale.NewClient("-", tailscale.APIKey(authkey))
+
+	details, err := client.Devices(context.Background(), nil)
+	if err != nil {
+		log.Fatal(err)
+
+	}
+
+	return details
+}
+
 func Logout() {
 	lclient := &tailscale.LocalClient{
 		Dial:          nil,
