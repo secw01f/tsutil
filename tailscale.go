@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -96,20 +95,18 @@ func TsStatus() string {
 }
 
 func TsDeviceId() string {
-	cmd := exec.Command("bash", "-c", "/Applications/Tailscale.app/Contents/MacOS/Tailscale status --json")
-	details, derr := cmd.Output()
-	if derr != nil {
-		log.Fatal(derr)
+	lclient := &tailscale.LocalClient{
+		Dial:          nil,
+		Socket:        "",
+		UseSocketOnly: false,
 	}
 
-	sdetails := string(details)
-	var data map[string]interface{}
-	err := json.Unmarshal([]byte(sdetails), &data)
-	if err != nil {
-		log.Fatal(err)
+	status, terr := lclient.Status(context.Background())
+	if terr != nil {
+		log.Fatal(terr)
 	}
 
-	return data["Self"].(map[string]interface{})["ID"].(string)
+	return string(status.Self.ID)
 }
 
 func TsDelete(authkey string, deviceid string) {
