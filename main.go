@@ -44,6 +44,8 @@ type Device struct {
 	Hostname      string
 	OS            string
 	ClientVersion string
+	Update        bool
+	Tags          []string
 }
 
 func main() {
@@ -118,7 +120,7 @@ func main() {
 			authkey = GetTsApi(tscid, *tscs)
 			details := TsDevice(authkey, TsDeviceId())
 			if *devicejson {
-				devicedetails := Device{NodeID: details.NodeID, Username: details.User, Hostname: details.Hostname, OS: details.OS, ClientVersion: details.ClientVersion}
+				devicedetails := Device{NodeID: details.NodeID, Username: details.User, Hostname: details.Hostname, OS: details.OS, ClientVersion: details.ClientVersion, Update: details.UpdateAvailable, Tags: details.Tags}
 				devicedata, err := json.MarshalIndent(devicedetails, "", "    ")
 				if err != nil {
 					log.Fatal(err)
@@ -130,13 +132,15 @@ func main() {
 				fmt.Println("Hostname:", details.Hostname)
 				fmt.Println("OS:", details.OS)
 				fmt.Println("Client Version:", details.ClientVersion)
+				fmt.Println("Update:", details.UpdateAvailable)
+				fmt.Println("Tags:", details.Tags)
 			}
 		} else {
 			tscid := strings.Split(*tscs, "-")[2]
 			authkey = GetTsApi(tscid, *tscs)
 			details := TsDevice(authkey, *detailsid)
 			if *devicejson {
-				devicedetails := Device{NodeID: details.NodeID, Username: details.User, Hostname: details.Hostname, OS: details.OS, ClientVersion: details.ClientVersion}
+				devicedetails := Device{NodeID: details.NodeID, Username: details.User, Hostname: details.Hostname, OS: details.OS, ClientVersion: details.ClientVersion, Update: details.UpdateAvailable, Tags: details.Tags}
 				devicedata, err := json.MarshalIndent(devicedetails, "", "    ")
 				if err != nil {
 					log.Fatal(err)
@@ -148,6 +152,8 @@ func main() {
 				fmt.Println("Hostname:", details.Hostname)
 				fmt.Println("OS:", details.OS)
 				fmt.Println("Client Version:", details.ClientVersion)
+				fmt.Println("Update:", details.UpdateAvailable)
+				fmt.Println("Tags:", details.Tags)
 			}
 		}
 	case devices.FullCommand():
@@ -160,7 +166,7 @@ func main() {
 		if *devicesjson {
 			jsondevices := Devices{Devices: []Device{}}
 			for _, device := range devices {
-				devicedetails := Device{NodeID: device.NodeID, Username: device.User, Hostname: device.Hostname, OS: device.OS, ClientVersion: device.ClientVersion}
+				devicedetails := Device{NodeID: device.NodeID, Username: device.User, Hostname: device.Hostname, OS: device.OS, ClientVersion: device.ClientVersion, Update: device.UpdateAvailable, Tags: device.Tags}
 				jsondevices.Devices = append(jsondevices.Devices, devicedetails)
 			}
 			devicesdata, err := json.MarshalIndent(jsondevices, "", "    ")
@@ -175,6 +181,8 @@ func main() {
 				fmt.Println("Hostname:", device.Hostname)
 				fmt.Println("OS:", device.OS)
 				fmt.Printf("Client Version: %s\n", device.ClientVersion)
+				fmt.Println("Update:", device.UpdateAvailable)
+				fmt.Printf("Tags: %s\n", device.Tags)
 			}
 		}
 	case logout.FullCommand():
